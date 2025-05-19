@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitação de Localização</title>
+    <script>
+        function solicitarLocalizacao() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(armazenarDados, erroLocalizacao);
+            } else {
+                alert("Geolocalização não é suportada pelo seu navegador.");
+            }
+        }
+
+        function armazenarDados(posicao) {
+            const latitude = posicao.coords.latitude;
+            const longitude = posicao.coords.longitude;
+            const dispositivo = navigator.userAgent;
+            const navegador = navigator.appName;
+            const data = new Date();
+            data.setTime(data.getTime() + (7 * 24 * 60 * 60 * 1000));
+            const expiracao = "expires=" + data.toUTCString();
+
+            document.cookie = `latitude=${latitude}; ${expiracao}; path=/`;
+            document.cookie = `longitude=${longitude}; ${expiracao}; path=/`;
+            document.cookie = `dispositivo=${dispositivo}; ${expiracao}; path=/`;
+            document.cookie = `navegador=${navegador}; ${expiracao}; path=/`;
+
+            alert("Dados armazenados com sucesso!");
+        }
+
+        function erroLocalizacao(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("Permissão negada pelo usuário.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Informações de localização indisponíveis.");
+                    break;
+                case error.TIMEOUT:
+                    alert("A solicitação expirou.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("Erro desconhecido ao obter localização.");
+                    break;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Permitir acesso à localização</h2>
+    <p>Para melhorar sua experiência, precisamos acessar sua localização, dispositivo e navegador.</p>
+    <button onclick="solicitarLocalizacao()">Aceitar e continuar</button>
+</body>
+</html>
